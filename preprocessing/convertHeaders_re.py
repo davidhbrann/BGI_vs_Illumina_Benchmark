@@ -5,6 +5,14 @@ import sys
 import argparse
 import gzip
 import re
+import logging
+import time
+
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.DEBUG,
+)
 
 # Rewrite as illumina header
 def convertIllumina(elements_dict):
@@ -29,10 +37,12 @@ def convertIllumina(elements_dict):
 # eg.
 def parseBGI(header, flowcell_id, barcode):
     # Extract sample barcode sequence
-    splits = re.split(f"@{flowcell_id}L(\d)C(\d\d\d)R(\d\d\d)(\d+)/(\d)_{barcode}\n", header)
+    splits = re.split(
+        f"@{flowcell_id}L(\d)C(\d\d\d)R(\d\d\d)(\d+)/(\d)_{barcode}\n", header
+    )
     splits = [int(x) if x.isdigit() else x for x in splits]
     _, lane_id, x_id, y_id, tile_number, paired_read_direction, _ = splits
-        # Pack into dictionary
+    # Pack into dictionary
     elements_dict = {
         "instrument": "MGISEQ-2000",
         "run_number": 1,
@@ -63,12 +73,6 @@ def open_file(input_file, mode="rb"):
     else:
         input_fastq = open(input_file, mode)
     return input_fastq
-
-
-# Retrieves arguments inputted by user
-def parseArguments(args):
-    # Retrieve from parser
-    return args.input, args.output, args.sample, args.barcode
 
 
 # Sets up arguments for user input
@@ -103,22 +107,33 @@ def setupParser():
         type=str,
         required=True,
     )
+    parser.add_argument("--verbose", dest="verbose", action="store_true")
+    parser.set_defaults(verbose=False)
     args = parser.parse_args()
-
     return args
 
 
 # Code starts here
 if __name__ == "__main__":
     args = setupParser()
-    input_file, output_file, sample, barcode = parseArguments(args)
+    input_file, output_file, sample, barcode = (
+        args.input,
+        args.output,
+        args.sample,
+        args.barcode,
+    )
     input_fastq = open_file(input_file, "rt")
     output_fastq = open_file(output_file, "wt")
 
-    for line in input_fastq:
+    start_time = time.time()
+    for i, line in enumerate(input_fastq):
+        if (args.verbose) and (i % 10_000_000 == 0):
+            elapsed = time.time() - start_time
+            logging.debug(f"Read first {i // 10_000_000} million reads in {elapsed:.4f} seconds")
         parsed_line = parseLine(line, sample, barcode)
         output_fastq.write(parsed_line)
 
     input_fastq.close()
     output_fastq.close()
-    print("Conversion of %s complete!" % input_file)
+    elapsed = time.time() - start_time
+    print(f"Conversion of {input_file} complete in {elapsed:.4f} seconds!")
