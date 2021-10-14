@@ -129,11 +129,11 @@ if __name__ == "__main__":
     for i, line in enumerate(input_fastq):
         if (args.verbose) and (i % 10_000_000 == 0):
             elapsed = time.time() - start_time
-            logging.info(f"Read first {i // 40_00_000} million reads in {elapsed:.4f} seconds")
+            logging.info(f"Read first {i / 40_00_000:.2f} million reads in {elapsed:.4f} seconds")
         parsed_line = parseLine(line, sample, barcode)
         output_fastq.write(parsed_line)
 
     input_fastq.close()
     output_fastq.close()
     elapsed = time.time() - start_time
-    print(f"Conversion of {(i + 1) // 4} reads in {input_file} complete in {elapsed:.4f} seconds!")
+    print(f"Conversion of {(i + 1) / 4:.2f} reads in {input_file} complete in {elapsed:.4f} seconds!")
