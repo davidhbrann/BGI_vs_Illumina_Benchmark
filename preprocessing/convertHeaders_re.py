@@ -11,7 +11,7 @@ import time
 logging.basicConfig(
     stream=sys.stdout,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.DEBUG,
+    level=logging.INFO,
 )
 
 # Rewrite as illumina header
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     for i, line in enumerate(input_fastq):
         if (args.verbose) and (i % 10_000_000 == 0):
             elapsed = time.time() - start_time
-            logging.debug(f"Read first {i // 10_000_000} million reads in {elapsed:.4f} seconds")
+            logging.info(f"Read first {i // 10_000_000} million reads in {elapsed:.4f} seconds")
         parsed_line = parseLine(line, sample, barcode)
         output_fastq.write(parsed_line)
 
