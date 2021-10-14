@@ -49,7 +49,7 @@ def parseBGI(header, flowcell_id, barcode):
 
 # Parses the entry
 def parseLine(x, sample, barcode):
-    if x.startswith("@"):
+    if x.startswith(f"@{sample}"):
         elements_dict = parseBGI(x, sample, barcode)
         converted_header = convertIllumina(elements_dict)
         return converted_header
