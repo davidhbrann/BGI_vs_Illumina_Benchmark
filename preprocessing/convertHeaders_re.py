@@ -68,11 +68,7 @@ def open_file(input_file, mode="rb"):
 # Retrieves arguments inputted by user
 def parseArguments(args):
     # Retrieve from parser
-    input_file = args.input
-    output_file = args.output
-
-    # Extract barcode from filename
-    return input_file, output_file
+    return args.input, args.output, args.sample, args.barcode
 
 
 # Sets up arguments for user input
