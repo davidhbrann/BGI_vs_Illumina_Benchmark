@@ -136,4 +136,4 @@ if __name__ == "__main__":
     input_fastq.close()
     output_fastq.close()
     elapsed = time.time() - start_time
-    print(f"Conversion of {i // 4} reads in {input_file} complete in {elapsed:.4f} seconds!")
+    print(f"Conversion of {(i + 1) // 4} reads in {input_file} complete in {elapsed:.4f} seconds!")
