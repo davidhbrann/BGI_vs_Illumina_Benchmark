@@ -115,12 +115,12 @@ def setupParser():
 # Code starts here
 if __name__ == "__main__":
     args = setupParser()
-    input_file, output_file = parseArguments(args)
+    input_file, output_file, sample, barcode = parseArguments(args)
     input_fastq = open_file(input_file, "rt")
     output_fastq = open_file(output_file, "wt")
 
     for line in input_fastq:
-        parsed_line = parseLine(line)
+        parsed_line = parseLine(line, sample, barcode)
         output_fastq.write(parsed_line)
 
     input_fastq.close()
